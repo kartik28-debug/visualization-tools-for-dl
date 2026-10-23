@@ -1,6 +1,6 @@
 import type { OptimizerDefinition, Vec2, OptimizerConfig } from './types'
 
-interface AdaGradState { Gw: number; Gb: number }
+interface AdaGradState extends Record<string, unknown> { Gw: number; Gb: number }
 
 // AdaGrad:
 //   G(t) = G(t-1) + g(t)²

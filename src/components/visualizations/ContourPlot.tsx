@@ -233,16 +233,17 @@ export function ContourPlot() {
     }
   }, [optimizerStates, selectedOptimizers, lossFunction, toCanvas])
 
-  // Click to set initial position
-  const handleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+  // Click / touch to set initial position accurately mapped to bounding box
+  const handlePointerDown = useCallback((clientX: number, clientY: number) => {
     if (status === 'running') return
     const canvas = overlayRef.current
     if (!canvas) return
     const rect = canvas.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    const w = plotRange.wMin + (x / canvas.width) * (plotRange.wMax - plotRange.wMin)
-    const b = plotRange.bMin + (1 - y / canvas.height) * (plotRange.bMax - plotRange.bMin)
+    if (rect.width === 0 || rect.height === 0) return
+    const x = Math.max(0, Math.min(rect.width, clientX - rect.left))
+    const y = Math.max(0, Math.min(rect.height, clientY - rect.top))
+    const w = plotRange.wMin + (x / rect.width) * (plotRange.wMax - plotRange.wMin)
+    const b = plotRange.bMin + (1 - y / rect.height) * (plotRange.bMax - plotRange.bMin)
     setInitialParams({ w: parseFloat(w.toFixed(3)), b: parseFloat(b.toFixed(3)) })
   }, [status, plotRange, setInitialParams])
 
@@ -261,9 +262,14 @@ export function ContourPlot() {
         ref={overlayRef}
         width={500}
         height={400}
-        className="absolute inset-0 w-full h-full cursor-crosshair"
+        className="absolute inset-0 w-full h-full cursor-crosshair touch-none"
         style={{ borderRadius: 8 }}
-        onClick={handleClick}
+        onClick={(e) => handlePointerDown(e.clientX, e.clientY)}
+        onTouchStart={(e) => {
+          if (e.touches.length > 0) {
+            handlePointerDown(e.touches[0].clientX, e.touches[0].clientY)
+          }
+        }}
         title="Click to set starting position"
       />
 

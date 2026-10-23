@@ -1,6 +1,6 @@
 import type { OptimizerDefinition, Vec2, OptimizerConfig } from './types'
 
-interface AdamState { mw: number; mb: number; vw: number; vb: number }
+interface AdamState extends Record<string, unknown> { mw: number; mb: number; vw: number; vb: number }
 
 // Adam:
 //   m(t) = β1·m(t-1) + (1-β1)·g(t)          (first moment)

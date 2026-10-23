@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   Play, Pause, SkipForward, RotateCcw, RefreshCw,
-  ChevronRight, Download
+  Download
 } from 'lucide-react'
 import { useSimulationStore } from '../../store/simulationStore'
 import { exportCSV } from '../../utils/exportCsv'
@@ -10,7 +10,7 @@ const SPEED_OPTIONS = [0.25, 0.5, 1, 2, 4]
 
 export function SimulationControls() {
   const {
-    status, play, pause, reset, stepAll, initialize,
+    status, play, pause, reset, stepAll,
     currentEpoch, maxEpochs,
     playbackSpeed, setPlaybackSpeed,
     selectedOptimizers, optimizerStates, lossName,
@@ -50,7 +50,7 @@ export function SimulationControls() {
   const progressPct = maxEpochs > 0 ? Math.min(100, (currentEpoch / maxEpochs) * 100) : 0
 
   return (
-    <div className="flex items-center gap-3 px-4 h-12 shrink-0 border-t"
+    <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 h-12 shrink-0 border-t overflow-x-auto no-scrollbar"
       style={{ background: '#131722', borderColor: '#252B38' }}>
       {/* Primary controls */}
       <div className="flex items-center gap-1">
@@ -147,7 +147,7 @@ export function SimulationControls() {
         </div>
 
         {/* Progress bar */}
-        <div className="flex-1 max-w-48 h-1.5 rounded-full overflow-hidden" style={{ background: '#252B38' }}>
+        <div className="hidden sm:block flex-1 max-w-48 h-1.5 rounded-full overflow-hidden" style={{ background: '#252B38' }}>
           <div
             className="h-full rounded-full transition-all"
             style={{

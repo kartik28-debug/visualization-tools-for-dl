@@ -1,6 +1,6 @@
 import type { OptimizerDefinition, Vec2, OptimizerConfig } from './types'
 
-interface RMSPropState { sw: number; sb: number }
+interface RMSPropState extends Record<string, unknown> { sw: number; sb: number }
 
 // RMSProp:
 //   s(t) = β·s(t-1) + (1-β)·g(t)²

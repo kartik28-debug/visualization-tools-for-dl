@@ -2,11 +2,38 @@ import React, { useState, useMemo } from 'react'
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
 import { useSimulationStore } from '../../store/simulationStore'
 import { OPTIMIZER_REGISTRY, OPTIMIZER_ORDER } from '../../optimizers'
-import { formatNum, formatShort, formatDuration } from '../../utils/math'
+import { formatNum, formatShort } from '../../utils/math'
 import type { OptimizerName } from '../../optimizers/types'
 
 type SortKey = 'name' | 'loss' | 'bestLoss' | 'gradNorm' | 'epoch' | 'dist'
 type SortDir = 'asc' | 'desc'
+
+function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) {
+  if (sortKey !== col) return <ArrowUpDown size={10} style={{ opacity: 0.3 }} />
+  return sortDir === 'asc' ? <ArrowUp size={10} /> : <ArrowDown size={10} />
+}
+
+interface THProps {
+  col: SortKey
+  label: string
+  sortKey: SortKey
+  sortDir: SortDir
+  onSort: (key: SortKey) => void
+}
+
+function TableHeader({ col, label, sortKey, sortDir, onSort }: THProps) {
+  return (
+    <th>
+      <button
+        onClick={() => onSort(col)}
+        className="flex items-center gap-1 text-[9px] uppercase tracking-wider font-semibold w-full"
+        style={{ color: sortKey === col ? '#22d3ee' : '#5a6478' }}
+      >
+        {label} <SortIcon col={col} sortKey={sortKey} sortDir={sortDir} />
+      </button>
+    </th>
+  )
+}
 
 interface TableRow {
   name: OptimizerName
@@ -73,11 +100,6 @@ export function ComparisonTable() {
     else { setSortKey(key); setSortDir('asc') }
   }
 
-  const SortIcon = ({ col }: { col: SortKey }) => {
-    if (sortKey !== col) return <ArrowUpDown size={10} style={{ opacity: 0.3 }} />
-    return sortDir === 'asc' ? <ArrowUp size={10} /> : <ArrowDown size={10} />
-  }
-
   const hasOptimum = !!lossFunction.globalMinimum
 
   if (rows.length === 0) {
@@ -88,29 +110,17 @@ export function ComparisonTable() {
     )
   }
 
-  const TH = ({ col, label }: { col: SortKey; label: string }) => (
-    <th>
-      <button
-        onClick={() => handleSort(col)}
-        className="flex items-center gap-1 text-[9px] uppercase tracking-wider font-semibold w-full"
-        style={{ color: sortKey === col ? '#22d3ee' : '#5a6478' }}
-      >
-        {label} <SortIcon col={col} />
-      </button>
-    </th>
-  )
-
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-xs" style={{ borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ borderBottom: '1px solid #252B38' }}>
-            <TH col="name" label="Optimizer" />
-            <TH col="loss" label="Loss" />
-            <TH col="bestLoss" label="Best" />
-            <TH col="gradNorm" label="‖∇L‖" />
-            <TH col="epoch" label="Epochs" />
-            {hasOptimum && <TH col="dist" label="Dist★" />}
+            <TableHeader col="name" label="Optimizer" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+            <TableHeader col="loss" label="Loss" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+            <TableHeader col="bestLoss" label="Best" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+            <TableHeader col="gradNorm" label="‖∇L‖" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+            <TableHeader col="epoch" label="Epochs" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+            {hasOptimum && <TableHeader col="dist" label="Dist★" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />}
             <th className="text-[9px] uppercase tracking-wider text-left" style={{ color: '#5a6478' }}>Status</th>
           </tr>
         </thead>

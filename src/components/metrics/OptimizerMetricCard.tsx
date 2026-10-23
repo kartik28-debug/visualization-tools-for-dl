@@ -1,5 +1,5 @@
 import React from 'react'
-import { TrendingDown, AlertTriangle, CheckCircle, Clock, Target } from 'lucide-react'
+import { AlertTriangle, CheckCircle } from 'lucide-react'
 import { useSimulationStore } from '../../store/simulationStore'
 import { OPTIMIZER_REGISTRY, OPTIMIZER_ORDER } from '../../optimizers'
 import { formatNum, formatShort } from '../../utils/math'

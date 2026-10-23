@@ -1,6 +1,6 @@
 import type { OptimizerDefinition, Vec2, OptimizerConfig } from './types'
 
-interface NesterovState { vw: number; vb: number }
+interface NesterovState extends Record<string, unknown> { vw: number; vb: number }
 
 // Nesterov Accelerated Gradient (Sutskever formulation):
 //   v(t) = β·v(t-1) + η·∇L(θ(t) - β·v(t-1))

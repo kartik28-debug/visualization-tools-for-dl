@@ -8,7 +8,7 @@ import {
 import { type LossFunctionName, type LossFunction } from '../losses/types'
 import { LOSS_REGISTRY, createRegressionLoss, generateDataset } from '../losses'
 import { createOptimizerState, stepOptimizer } from '../simulation/engine'
-import { PRESETS, type ExperimentPreset } from '../simulation/presets'
+import { type ExperimentPreset } from '../simulation/presets'
 
 export type SimStatus = 'idle' | 'running' | 'paused' | 'done'
 export type ActiveTab = 'playground' | 'theory' | 'benchmarks'

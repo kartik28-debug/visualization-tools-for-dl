@@ -1,5 +1,5 @@
 import React from 'react'
-import { Activity, RotateCcw, Sun, Moon, FlaskConical } from 'lucide-react'
+import { Activity, RotateCcw, Sun, Moon, FlaskConical, SlidersHorizontal } from 'lucide-react'
 import { useSimulationStore } from '../../store/simulationStore'
 import type { ActiveTab } from '../../store/simulationStore'
 
@@ -15,11 +15,25 @@ interface NavbarProps {
 }
 
 export function Navbar({ darkMode, onToggleDark }: NavbarProps) {
-  const { activeTab, setActiveTab, reset, lossName, selectedOptimizers, status } = useSimulationStore()
+  const {
+    activeTab, setActiveTab, reset, lossName, selectedOptimizers, status,
+    sidebarOpen, setSidebarOpen
+  } = useSimulationStore()
 
   return (
-    <header className="flex items-center gap-4 px-4 h-12 shrink-0 border-b"
+    <header className="flex items-center gap-2 sm:gap-4 px-3 sm:px-4 h-12 shrink-0 border-b"
       style={{ background: '#131722', borderColor: '#252B38' }}>
+      {/* Mobile sidebar button */}
+      {activeTab === 'playground' && (
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="btn btn-ghost btn-icon lg:hidden"
+          title="Toggle Configuration"
+          id="navbar-mobile-sidebar-btn"
+        >
+          <SlidersHorizontal size={14} />
+        </button>
+      )}
       {/* Logo */}
       <div className="flex items-center gap-2 mr-2">
         <div className="w-7 h-7 rounded-lg flex items-center justify-center"
@@ -50,7 +64,7 @@ export function Navbar({ darkMode, onToggleDark }: NavbarProps) {
       </nav>
 
       {/* Experiment info */}
-      <div className="flex items-center gap-2 ml-auto text-xs" style={{ color: '#5a6478' }}>
+      <div className="hidden md:flex items-center gap-2 ml-auto text-xs" style={{ color: '#5a6478' }}>
         <FlaskConical size={12} />
         <span className="mono">{lossName}</span>
         <span>·</span>
@@ -66,7 +80,7 @@ export function Navbar({ darkMode, onToggleDark }: NavbarProps) {
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 ml-auto md:ml-0">
         <button
           onClick={reset}
           className="btn btn-ghost btn-icon tooltip"

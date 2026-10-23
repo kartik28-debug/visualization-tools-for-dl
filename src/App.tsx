@@ -14,30 +14,34 @@ import { useSimulationLoop } from './simulation/useSimulationLoop'
 import { OPTIMIZER_REGISTRY } from './optimizers'
 
 function PlaygroundView() {
-  const { sidebarOpen } = useSimulationStore()
   const [rightTab, setRightTab] = useState<'metrics' | 'table' | 'charts'>('metrics')
   const [vizTab, setVizTab] = useState<'3d' | 'contour'>('3d')
 
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div className="flex flex-1 overflow-hidden relative min-h-0">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Top: Visualizations */}
-        <div className="flex flex-1 gap-0 overflow-hidden min-h-0">
-          {/* Left: Primary visualization */}
-          <div className="flex flex-col flex-1 min-w-0 overflow-hidden" style={{ borderRight: '1px solid #252B38' }}>
-            {/* Viz tabs */}
-            <div className="flex items-center gap-1 px-3 py-2 border-b shrink-0"
-              style={{ borderColor: '#252B38', background: '#0f1420' }}>
+      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+        {/* Visualizations & Panels */}
+        <div className="flex flex-col lg:flex-row flex-1 gap-0 overflow-y-auto lg:overflow-hidden min-h-0">
+          {/* Primary visualization container */}
+          <div
+            className="flex flex-col flex-1 min-w-0 min-h-[320px] sm:min-h-[400px] lg:min-h-0 overflow-hidden shrink-0 lg:shrink"
+            style={{ borderRight: '1px solid #252B38' }}
+          >
+            {/* Viz tabs & legend bar */}
+            <div
+              className="flex items-center gap-1.5 px-3 py-2 border-b shrink-0 overflow-x-auto no-scrollbar"
+              style={{ borderColor: '#252B38', background: '#0f1420' }}
+            >
               {(['3d', 'contour'] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setVizTab(tab)}
                   id={`viz-tab-${tab}`}
-                  className="px-3 py-1 text-[11px] font-medium rounded"
+                  className="px-2.5 sm:px-3 py-1 text-[11px] font-medium rounded shrink-0"
                   style={{
                     background: vizTab === tab ? 'rgba(34,211,238,0.1)' : 'transparent',
                     color: vizTab === tab ? '#22d3ee' : '#5a6478',
@@ -47,13 +51,13 @@ function PlaygroundView() {
                   {tab === '3d' ? '3D Surface' : '2D Contour'}
                 </button>
               ))}
-              <div className="ml-auto">
+              <div className="ml-auto overflow-x-auto no-scrollbar pl-2 shrink-0">
                 <OptimizerLegend />
               </div>
             </div>
 
-            {/* Visualization */}
-            <div className="flex-1 p-2 overflow-hidden">
+            {/* Canvas / Visualization Area */}
+            <div className="flex-1 p-2 overflow-hidden relative min-h-[280px]">
               {vizTab === '3d' ? (
                 <LossSurface3D />
               ) : (
@@ -63,10 +67,15 @@ function PlaygroundView() {
           </div>
 
           {/* Right: Metrics / Table / Charts */}
-          <div className="flex flex-col overflow-hidden shrink-0" style={{ width: 320 }}>
+          <div
+            className="flex flex-col overflow-hidden shrink-0 w-full lg:w-80 border-t lg:border-t-0"
+            style={{ minHeight: 280 }}
+          >
             {/* Right tabs */}
-            <div className="flex items-center border-b shrink-0"
-              style={{ borderColor: '#252B38', background: '#0f1420' }}>
+            <div
+              className="flex items-center border-b shrink-0"
+              style={{ borderColor: '#252B38', background: '#0f1420' }}
+            >
               {([
                 { id: 'metrics', label: 'Metrics' },
                 { id: 'table', label: 'Compare' },
@@ -102,11 +111,11 @@ function PlaygroundView() {
 function OptimizerLegend() {
   const { selectedOptimizers } = useSimulationStore()
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 sm:gap-3 flex-nowrap">
       {selectedOptimizers.map((name) => {
         const def = OPTIMIZER_REGISTRY[name]
         return (
-          <div key={name} className="flex items-center gap-1.5">
+          <div key={name} className="flex items-center gap-1 sm:gap-1.5 shrink-0">
             <div className="w-2 h-2 rounded-full" style={{ background: def.color }} />
             <span className="text-[10px]" style={{ color: def.color }}>{def.label}</span>
           </div>

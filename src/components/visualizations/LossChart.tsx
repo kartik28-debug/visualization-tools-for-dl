@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Legend, ReferenceLine
+  ResponsiveContainer, ReferenceLine
 } from 'recharts'
 import { useSimulationStore } from '../../store/simulationStore'
 import { OPTIMIZER_REGISTRY } from '../../optimizers'

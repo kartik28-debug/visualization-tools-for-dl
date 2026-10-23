@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import katex from 'katex'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import type { OptimizerName } from '../../optimizers/types'
 
@@ -125,15 +126,12 @@ const THEORY_DATA: TheoryData[] = [
 ]
 
 function EquationLine({ latex }: { latex: string }) {
-  // Render LaTeX using KaTeX if available, fallback to code block
-  const [rendered, setRendered] = React.useState<string | null>(null)
-  React.useEffect(() => {
+  const rendered = React.useMemo(() => {
     try {
-      const katex = (window as any).katex
-      if (katex) {
-        setRendered(katex.renderToString(latex, { throwOnError: false, displayMode: false }))
-      }
-    } catch { /* ignore */ }
+      return katex.renderToString(latex, { throwOnError: false, displayMode: false })
+    } catch {
+      return null
+    }
   }, [latex])
 
   if (rendered) {

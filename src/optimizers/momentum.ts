@@ -1,6 +1,6 @@
 import type { OptimizerDefinition, Vec2, OptimizerConfig } from './types'
 
-interface MomentumState { vw: number; vb: number }
+interface MomentumState extends Record<string, unknown> { vw: number; vb: number }
 
 // Momentum:
 //   v(t) = β·v(t-1) + ∇L(θ(t))

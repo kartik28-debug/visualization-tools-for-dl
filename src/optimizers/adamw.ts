@@ -1,6 +1,6 @@
 import type { OptimizerDefinition, Vec2, OptimizerConfig } from './types'
 
-interface AdamWState { mw: number; mb: number; vw: number; vb: number }
+interface AdamWState extends Record<string, unknown> { mw: number; mb: number; vw: number; vb: number }
 
 // AdamW — Adam with DECOUPLED weight decay (Loshchilov & Hutter, 2019)
 //

@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import {
-  ChevronLeft, ChevronRight, CheckSquare, Square,
-  Settings, BarChart2, Info, Zap
+  ChevronLeft, ChevronRight, CheckSquare,
+  Settings, BarChart2, Zap
 } from 'lucide-react'
 import { useSimulationStore } from '../../store/simulationStore'
 import { OPTIMIZER_REGISTRY, OPTIMIZER_ORDER } from '../../optimizers'
-import { LOSS_REGISTRY } from '../../losses'
 import { PRESETS } from '../../simulation/presets'
 import type { LossFunctionName } from '../../losses/types'
-import type { OptimizerName } from '../../optimizers/types'
 
 const LOSS_OPTIONS: { id: LossFunctionName; label: string }[] = [
   { id: 'quadratic', label: 'Quadratic Bowl' },
@@ -16,6 +14,32 @@ const LOSS_OPTIONS: { id: LossFunctionName; label: string }[] = [
   { id: 'himmelblau', label: 'Himmelblau' },
   { id: 'regression', label: 'Linear Regression MSE' },
 ]
+
+interface SectionHeaderProps {
+  id: string
+  icon: React.ReactNode
+  label: string
+  isExpanded: boolean
+  onToggle: (id: string) => void
+}
+
+function SectionHeader({ id, icon, label, isExpanded, onToggle }: SectionHeaderProps) {
+  return (
+    <button
+      onClick={() => onToggle(id)}
+      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors"
+      style={{ color: isExpanded ? '#22d3ee' : '#5a6478' }}
+    >
+      {icon}
+      <span>{label}</span>
+      <ChevronRight
+        size={12}
+        className="ml-auto transition-transform"
+        style={{ transform: isExpanded ? 'rotate(90deg)' : 'none' }}
+      />
+    </button>
+  )
+}
 
 export function Sidebar() {
   const {
@@ -34,22 +58,9 @@ export function Sidebar() {
   const toggle = (section: string) =>
     setExpandedSection(expandedSection === section ? null : section)
 
-  const SectionHeader = ({ id, icon, label }: { id: string; icon: React.ReactNode; label: string }) => (
-    <button
-      onClick={() => toggle(id)}
-      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors"
-      style={{ color: expandedSection === id ? '#22d3ee' : '#5a6478' }}
-    >
-      {icon}
-      <span>{label}</span>
-      <ChevronRight size={12} className="ml-auto transition-transform"
-        style={{ transform: expandedSection === id ? 'rotate(90deg)' : 'none' }} />
-    </button>
-  )
-
   if (!sidebarOpen) {
     return (
-      <aside className="flex flex-col items-center py-3 gap-3 border-r"
+      <aside className="hidden lg:flex flex-col items-center py-3 gap-3 border-r"
         style={{ width: 40, background: '#131722', borderColor: '#252B38' }}>
         <button onClick={() => setSidebarOpen(true)} className="btn btn-ghost btn-icon" id="sidebar-open-btn">
           <ChevronRight size={14} />
@@ -62,8 +73,15 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="flex flex-col border-r overflow-hidden shrink-0"
-      style={{ width: 260, background: '#131722', borderColor: '#252B38' }}>
+    <>
+      {/* Mobile backdrop */}
+      <div
+        className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+        onClick={() => setSidebarOpen(false)}
+        aria-hidden="true"
+      />
+      <aside className="fixed inset-y-0 left-0 z-50 w-72 lg:w-[260px] lg:static lg:z-auto flex flex-col border-r overflow-hidden shrink-0 shadow-2xl lg:shadow-none animate-slide-in-left lg:animate-none"
+        style={{ background: '#131722', borderColor: '#252B38' }}>
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b" style={{ borderColor: '#252B38' }}>
         <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#5a6478' }}>
@@ -77,7 +95,13 @@ export function Sidebar() {
       <div className="flex-1 overflow-y-auto">
         {/* PRESETS */}
         <div className="border-b" style={{ borderColor: '#252B38' }}>
-          <SectionHeader id="presets" icon={<Zap size={12} />} label="Presets" />
+          <SectionHeader
+            id="presets"
+            icon={<Zap size={12} />}
+            label="Presets"
+            isExpanded={expandedSection === 'presets'}
+            onToggle={toggle}
+          />
           {expandedSection === 'presets' && (
             <div className="px-3 pb-3 space-y-1.5">
               {PRESETS.map((preset) => (
@@ -106,7 +130,13 @@ export function Sidebar() {
 
         {/* LOSS FUNCTION */}
         <div className="border-b" style={{ borderColor: '#252B38' }}>
-          <SectionHeader id="loss" icon={<BarChart2 size={12} />} label="Loss Function" />
+          <SectionHeader
+            id="loss"
+            icon={<BarChart2 size={12} />}
+            label="Loss Function"
+            isExpanded={expandedSection === 'loss'}
+            onToggle={toggle}
+          />
           {expandedSection === 'loss' && (
             <div className="px-3 pb-3 space-y-1.5">
               {LOSS_OPTIONS.map((opt) => (
@@ -144,7 +174,13 @@ export function Sidebar() {
 
         {/* OPTIMIZERS */}
         <div className="border-b" style={{ borderColor: '#252B38' }}>
-          <SectionHeader id="optimizers" icon={<CheckSquare size={12} />} label="Optimizers" />
+          <SectionHeader
+            id="optimizers"
+            icon={<CheckSquare size={12} />}
+            label="Optimizers"
+            isExpanded={expandedSection === 'optimizers'}
+            onToggle={toggle}
+          />
           {expandedSection === 'optimizers' && (
             <div className="px-3 pb-3">
               <div className="flex gap-2 mb-2">
@@ -198,7 +234,13 @@ export function Sidebar() {
 
         {/* HYPERPARAMETERS */}
         <div className="border-b" style={{ borderColor: '#252B38' }}>
-          <SectionHeader id="hyperparams" icon={<Settings size={12} />} label="Hyperparameters" />
+          <SectionHeader
+            id="hyperparams"
+            icon={<Settings size={12} />}
+            label="Hyperparameters"
+            isExpanded={expandedSection === 'hyperparams'}
+            onToggle={toggle}
+          />
           {expandedSection === 'hyperparams' && (
             <div className="px-3 pb-3 space-y-3">
               <HyperParam
@@ -301,6 +343,7 @@ export function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   )
 }
 
